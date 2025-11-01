@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { isFullscreen as checkFullscreen, exitFullscreen, isFullscreenSupported } from '../utils/fullscreen';
+import { isFullscreen as checkFullscreen, exitFullscreen, isFullscreenSupported, isMobile } from '../utils/fullscreen';
 
 /**
  * Custom hook for auto-enabling fullscreen on first user interaction
@@ -55,7 +55,7 @@ export const useFirstInteractionFullscreen = () => {
     };
   }, []);
 
-  // Trigger fullscreen on ANY user interaction
+  // Trigger fullscreen on click (desktop) or touch/click (mobile)
   useEffect(() => {
     if (!isFullscreenSupported()) return;
 
@@ -70,15 +70,11 @@ export const useFirstInteractionFullscreen = () => {
       }
     };
 
-    // Only the events that ACTUALLY work as user gestures on all devices
-    // Using capture: false (default) so event reaches target first, then bubbles to us
-    const events = [
-      'click',
-      'mousedown',
-      'keydown',
-      'touchstart',
-      'pointerdown'
-    ];
+    // Mobile: listen to touchstart and click
+    // Desktop: listen to click only
+    const events = isMobile() 
+      ? ['touchstart', 'click']  // Mobile devices
+      : ['click'];                // Desktop only
 
     // Add listeners in bubble phase (default) so target handlers run first
     events.forEach(event => {
