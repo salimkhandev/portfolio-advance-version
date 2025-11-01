@@ -1,24 +1,9 @@
 const multer = require('multer');
 const path = require('path');
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Temporary storage - files will be uploaded to Cloudinary and then deleted
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename with appropriate prefix
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    let prefix = 'file-';
-    if (file.fieldname === 'thumbnail' || file.fieldname === 'image') {
-      prefix = file.fieldname === 'thumbnail' ? 'thumbnail-' : 'image-';
-    } else if (file.fieldname === 'video') {
-      prefix = 'video-';
-    }
-    cb(null, prefix + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Use memory storage for serverless compatibility (Vercel, etc.)
+// Files are stored in memory as Buffer, then uploaded directly to Cloudinary
+const storage = multer.memoryStorage();
 
 // File filter for videos
 const videoFilter = (req, file, cb) => {

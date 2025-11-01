@@ -125,11 +125,14 @@ const addSkill = async (req, res) => {
             });
         }
         
-        console.log('File uploaded successfully:', req.file.filename);
+        console.log('File uploaded successfully:', req.file.originalname);
+        console.log('File buffer size:', req.file.buffer ? req.file.buffer.length : 'No buffer');
 
         try {
+            // Use buffer (memory storage) or path (disk storage)
+            const fileInput = req.file.buffer || req.file.path;
             const imageResult = await uploadImageToCloudinary(
-                req.file.path,
+                fileInput,
                 'skill-icons'
             );
             req.body.imageUrl = imageResult.url;
@@ -225,8 +228,10 @@ const updateSkill = async (req, res) => {
 
             // Upload new image to Cloudinary
             try {
+                // Use buffer (memory storage) or path (disk storage)
+                const fileInput = req.file.buffer || req.file.path;
                 const imageResult = await uploadImageToCloudinary(
-                    req.file.path,
+                    fileInput,
                     'skill-icons'
                 );
                 req.body.imageUrl = imageResult.url;

@@ -113,7 +113,10 @@ const addProject = async (req, res) => {
         // Handle video upload
         if (req.files && req.files['video'] && req.files['video'][0]) {
             try {
-                const videoResult = await uploadVideoToCloudinary(req.files['video'][0].path);
+                const videoFile = req.files['video'][0];
+                // Use buffer (memory storage) or path (disk storage)
+                const videoInput = videoFile.buffer || videoFile.path;
+                const videoResult = await uploadVideoToCloudinary(videoInput);
                 req.body.cloudinaryVideoUrl = videoResult.url;
                 req.body.cloudinaryVideoPublicId = videoResult.public_id;
             } catch (uploadError) {
@@ -129,7 +132,10 @@ const addProject = async (req, res) => {
         // Handle thumbnail upload
         if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
             try {
-                const thumbnailResult = await uploadImageToCloudinary(req.files['thumbnail'][0].path);
+                const thumbnailFile = req.files['thumbnail'][0];
+                // Use buffer (memory storage) or path (disk storage)
+                const thumbnailInput = thumbnailFile.buffer || thumbnailFile.path;
+                const thumbnailResult = await uploadImageToCloudinary(thumbnailInput);
                 req.body.cloudinaryThumbnailUrl = thumbnailResult.url;
                 req.body.cloudinaryThumbnailPublicId = thumbnailResult.public_id;
             } catch (uploadError) {
@@ -241,7 +247,10 @@ const updateProject = async (req, res) => {
 
             // Upload new video to Cloudinary
             try {
-                const videoResult = await uploadVideoToCloudinary(req.files['video'][0].path);
+                const videoFile = req.files['video'][0];
+                // Use buffer (memory storage) or path (disk storage)
+                const videoInput = videoFile.buffer || videoFile.path;
+                const videoResult = await uploadVideoToCloudinary(videoInput);
                 req.body.cloudinaryVideoUrl = videoResult.url;
                 req.body.cloudinaryVideoPublicId = videoResult.public_id;
             } catch (uploadError) {
@@ -270,7 +279,10 @@ const updateProject = async (req, res) => {
 
             // Upload new thumbnail to Cloudinary
             try {
-                const thumbnailResult = await uploadImageToCloudinary(req.files['thumbnail'][0].path);
+                const thumbnailFile = req.files['thumbnail'][0];
+                // Use buffer (memory storage) or path (disk storage)
+                const thumbnailInput = thumbnailFile.buffer || thumbnailFile.path;
+                const thumbnailResult = await uploadImageToCloudinary(thumbnailInput);
                 req.body.cloudinaryThumbnailUrl = thumbnailResult.url;
                 req.body.cloudinaryThumbnailPublicId = thumbnailResult.public_id;
             } catch (uploadError) {
