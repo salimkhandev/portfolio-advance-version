@@ -29,6 +29,31 @@ app.options('*', cors(corsOptions));
 app.use(express.json());       // parse JSON request bodies
 app.use(cookieParser());      // parse cookies
 
+// --- Database Connection Middleware ---
+// For serverless: check if connected, connect if not (reuses connection)
+// For local: connect on startup
+let dbConnected = false;
+
+const ensureDBConnection = async (req, res, next) => {
+    if (!dbConnected) {
+        try {
+            await connectDB();
+            dbConnected = true;
+        } catch (error) {
+            console.error('Database connection error:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Database connection failed',
+                error: error.message
+            });
+        }
+    }
+    next();
+};
+
+// Apply database connection middleware to all API routes
+app.use('/api', ensureDBConnection);
+
 // --- Default Route ---
 app.get("/", (req, res) => {
     res.json({ message: "Hello from the backend" });
@@ -39,19 +64,22 @@ app.use("/api/users", userRoutes);       // login route
 app.use("/api/projects", projectRoutes); // CRUD project routes
 app.use("/api/skills", skillRoutes);    // CRUD skill routes
 
-// --- Connect to MongoDB and start server ---
-const startServer = async () => {
-    try {
-        
-        await connectDB();
-        
-        app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
-    }
-};
-
-startServer();
+// --- Connect to MongoDB for Local Development ---
+if (!process.env.VERCEL) {
+    const startServer = async () => {
+        try {
+            await connectDB();
+            dbConnected = true;
+            app.listen(PORT, () => {
+                console.log(`Server running on http://localhost:${PORT}`);
+            });
+        } catch (error) {
+            console.error('Failed to start server:', error);
+            process.exit(1);
+        }
+    };
+    startServer();
+} else {
+    // Export app for Vercel serverless
+    module.exports = app;
+}
