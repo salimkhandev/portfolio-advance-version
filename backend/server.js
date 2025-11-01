@@ -23,9 +23,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Explicitly handle OPTIONS preflight requests
-app.options('*', cors(corsOptions));
 app.use(express.json());       // parse JSON request bodies
 app.use(cookieParser());      // parse cookies
 
