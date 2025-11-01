@@ -3,7 +3,15 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 const SkillsContext = createContext();
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+// Helper to ensure HTTPS in production
+const ensureHttps = (url) => {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+};
+
+const BASE_URL = ensureHttps(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
 const API_BASE_URL = BASE_URL.endsWith('/api') ? BASE_URL : `${BASE_URL}/api`;
 
 export const SkillsProvider = ({ children }) => {

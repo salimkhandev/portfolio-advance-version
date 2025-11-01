@@ -6,8 +6,16 @@ const ProjectsContext = createContext();
 // API base URL - defaults to localhost for development
 // Set VITE_API_BASE_URL in .env file to override for production
 // For local: VITE_API_BASE_URL=http://localhost:3000
-// For production: VITE_API_BASE_URL=https://portfolio-backend-git-main-salimkhandevs-projects.vercel.app
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+// For production: VITE_API_BASE_URL=https://salimkhandev-portfolio-backend.vercel.app
+// Helper to ensure HTTPS in production (auto-converts HTTP to HTTPS when frontend is HTTPS)
+const ensureHttps = (url) => {
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http://')) {
+    return url.replace('http://', 'https://');
+  }
+  return url;
+};
+
+const BASE_URL = ensureHttps(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
 const API_BASE_URL = BASE_URL.endsWith('/api') ? BASE_URL : `${BASE_URL}/api`;
 
 export const ProjectsProvider = ({ children }) => {
