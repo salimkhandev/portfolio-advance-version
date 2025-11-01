@@ -6,6 +6,7 @@ import AdminPanel from "./components/AdminPanel";
 import CursorTrail from "./components/CursorTrail";
 import FloatingChat from "./components/FloatingChat";
 import FloatingContact from "./components/FloatingContact";
+import FullscreenButton from "./components/FullscreenButton";
 import Headers from "./components/Headers";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -17,9 +18,13 @@ import UnifiedDashboard from "./components/UnifiedDashboard";
 import { AuthProvider } from "./context/AuthContext";
 import { ProjectsProvider } from "./context/ProjectsContext";
 import { SkillsProvider } from "./context/SkillsContext";
+import { useFirstInteractionFullscreen } from "./hooks/useFirstInteractionFullscreen";
 
 function App() {
   const [showSplash, setShowSplash] = useState(false);
+
+  // Auto-enable fullscreen on first user interaction
+  useFirstInteractionFullscreen();
 
   useEffect(() => {
     // Simulate a delay to hide the splash screen after 3 seconds
@@ -34,42 +39,43 @@ function App() {
       <ProjectsProvider>
         <SkillsProvider>
           <Router>
-          <div className="svg relative">
-            {showSplash ? (
-              <SplashScreen />
-            ) : (
-              <>
-                <My3DBackground />
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <UnifiedDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/admin" element={<AdminPanel />} />
-                  <Route
-                    path="/"
-                    element={
-                      <>
-                        <Headers />
-                        <Home />
-                        <About />
-                        <Projects />
-                        <CursorTrail />
-                        <FloatingChat />
-                        <FloatingContact />
-                      </>
-                    }
-                  />
-                </Routes>
-              </>
-            )}
-          </div>
-        </Router>
+            <div className="svg relative">
+              {showSplash ? (
+                <SplashScreen />
+              ) : (
+                <>
+                  <My3DBackground />
+                  <FullscreenButton />
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <UnifiedDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/admin" element={<AdminPanel />} />
+                    <Route
+                      path="/"
+                      element={
+                        <>
+                          <Headers />
+                          <Home />
+                          <About />
+                          <Projects />
+                          <CursorTrail />
+                          <FloatingChat />
+                          <FloatingContact />
+                        </>
+                      }
+                    />
+                  </Routes>
+                </>
+              )}
+            </div>
+          </Router>
         </SkillsProvider>
       </ProjectsProvider>
     </AuthProvider>
