@@ -21,9 +21,9 @@ const loginUser = async (req, res) => {
 
         // ✅ set cookie here
         res.cookie("token", token, {
-            httpOnly: false,
-            secure: false, // set true in production (HTTPS)
-            sameSite: "Lax",
+            httpOnly: true,
+            secure: true, // set true in production (HTTPS)
+            sameSite: "None",
             maxAge: 24 * 60 * 60 * 1000
         });
 
