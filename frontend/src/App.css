@@ -1,0 +1,49 @@
+/* App.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+}
+
+
+.skill-bar {
+  margin-top: 20px;
+}
+
+.skill {
+  margin-bottom: 15px;
+  position: relative;
+  background: #333;
+  border-radius: 20px;
+  height: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.skill span {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0 10px;
+  /* line-height: 30px; */
+  color: #fff;
+  font-weight: bold;
+  text-align: left;
+  z-index: 2;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  background-color: #99948e;
+  /* Use the color from the profile background */
+  border-radius: 20px;
+  box-shadow: 0 3px 3px -5px #e29537, 0 2px 5px #aaa39a;
+  /* Update shadow color */
+  position: relative;
+  z-index: 1;
+}

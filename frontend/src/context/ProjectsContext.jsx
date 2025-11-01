@@ -1,0 +1,119 @@
+import PropTypes from 'prop-types';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+const ProjectsContext = createContext();
+
+// API base URL - defaults to localhost for development
+// Set VITE_API_BASE_URL in .env file to override for production
+// For local: VITE_API_BASE_URL=http://localhost:3000
+// For production: VITE_API_BASE_URL=https://portfolio-backend-git-main-salimkhandevs-projects.vercel.app
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = BASE_URL.endsWith('/api') ? BASE_URL : `${BASE_URL}/api`;
+
+export const ProjectsProvider = ({ children }) => {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch projects from backend
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Try the main API endpoint
+      let response = await fetch(`${API_BASE_URL}/projects`);
+      
+      // If 404, try without /api prefix (some deployments might not use it)
+      if (!response.ok && response.status === 404) {
+        const alternativeUrl = BASE_URL.endsWith('/api') 
+          ? BASE_URL.replace('/api', '') 
+          : BASE_URL;
+        response = await fetch(`${alternativeUrl}/projects`);
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch projects: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.projects) {
+        setProjects(data.projects);
+      } else {
+        throw new Error(data.message || 'Failed to fetch projects');
+      }
+    } catch (err) {
+      console.error('Error fetching projects:', err);
+      setError(err.message);
+      // Set empty array on error so UI doesn't break
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch projects on mount
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // Get single project by ID
+  const getProjectById = async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/projects/${id}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch project: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.project) {
+        return data.project;
+      } else {
+        throw new Error(data.message || 'Project not found');
+      }
+    } catch (err) {
+      console.error('Error fetching project:', err);
+      throw err;
+    }
+  };
+
+  // Refresh projects
+  const refreshProjects = () => {
+    fetchProjects();
+  };
+
+  const value = {
+    projects,
+    loading,
+    error,
+    getProjectById,
+    refreshProjects,
+  };
+
+  return (
+    <ProjectsContext.Provider value={value}>
+      {children}
+    </ProjectsContext.Provider>
+  );
+};
+
+ProjectsProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+// Custom hook to use the projects context
+export const useProjects = () => {
+  const context = useContext(ProjectsContext);
+  
+  if (!context) {
+    throw new Error('useProjects must be used within a ProjectsProvider');
+  }
+  
+  return context;
+};
+
+export default ProjectsContext;
+

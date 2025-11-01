@@ -1,0 +1,265 @@
+@import url("https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Ga+Maamli&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .-z-10 {
+        z-index: -10;
+    }
+}
+.stylish {
+    font-family: "Dancing Script", cursive;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: rgb(80, 180, 255);
+    text-shadow: 2px 2px 10px rgb(0, 26, 255);
+}
+html {
+    scroll-behavior: smooth;
+}
+.roboto-slab {
+    font-family: "Roboto Slab", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+.black-ops-one-regular {
+    font-family: "Black Ops One", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+header {
+    border-radius: 0 0 25px 25px;
+    top: 0;
+    z-index: 1000;
+    transition:
+        background-color 0.3s ease,
+        border-radius 0.3s ease;
+}
+
+.active {
+    background: linear-gradient(
+        45deg,
+        rgb(18, 9, 95),
+        rgb(50, 20, 150)
+    ); /* Smooth gradient */
+    color: white; /* Ensure text is readable */
+    padding: 0px 12px;
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold; /* Make the text stand out */
+    transition: all 0.3s ease-in-out; /* Smooth transition effect */
+}
+
+.active:hover {
+    background: linear-gradient(
+        45deg,
+        rgb(50, 20, 150),
+        rgb(18, 9, 95)
+    ); /* Reverse gradient on hover */
+    transform: scale(1.05); /* Slight enlargement effect */
+}
+
+/* DynamicCaption.css */
+
+.highlight {
+    color: rgb(20, 245, 215);
+    /* Blue text color */
+    font-size: 24px;
+}
+
+.page {
+    display: grid;
+    min-height: 100vh;
+}
+
+.page__txt {
+    margin: auto;
+}
+
+.txt {
+    color: transparent;
+    display: flex;
+    flex-wrap: wrap;
+
+    font-weight: bold;
+    font-size: 40px;
+    margin-bottom: 136px;
+    /* Fixed font size */
+    text-transform: uppercase;
+}
+
+.txt__character {
+    animation: fall 8s linear infinite;
+    animation-delay: calc(var(--i) * 200ms);
+}
+
+.txt__space {
+    width: 0.5em;
+    /* Adjust width as needed for spacing between words */
+}
+
+@keyframes fall {
+    50%,
+    80% {
+        color: hsl(calc(var(--i) * 25), 100%, 50%);
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    95%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.1;
+    }
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    color-scheme: light dark;
+}
+
+body.dark {
+    color-scheme: dark;
+}
+
+body.light {
+    color-scheme: light;
+}
+body::-webkit-scrollbar {
+    display: none;
+}
+/* SubmittedForms.css */
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Adjust timing and animation as needed */
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.svg {
+    cursor: url(https://img.icons8.com/color/23/blue-pointer.png), auto;
+}
+
+.handDrag {
+    cursor: url(https://img.icons8.com/color/28/hand-drag.png), auto;
+}
+
+/* Spinner When the form is submiting */
+.spinner {
+    border: 4px solid rgb(253, 248, 253);
+    /* Light grey background */
+    border-left: 4px solid black;
+    /* Black spinner color */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 460px) {
+    body {
+        /* Adjust the opacity as needed */
+        margin: 0;
+        font-family: Arial, sans-serif;
+        /* background-image: url("/protrait.jpeg"); */
+
+        background-size: cover;
+        background-position: center;
+
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        overflow-x: hidden;
+    }
+}
+
+@media (min-width: 340px) and (max-width: 495px) {
+    .a70 {
+        /* Add your styles here */
+        width: 382px;
+    }
+    .a70va {
+        width: 350px;
+        height: 715px;
+    }
+    /* a70:space-x-2 a70+:space-x-12 */
+    .skills {
+        /*style the text*/
+        width: 335px;
+        margin: 60px auto;
+        color: #fff;
+    }
+}
+
+@media (min-width: 315px) and (max-width: 373px) {
+    .size415 {
+        width: 300px;
+    }
+}
+@media (min-width: 377px) and (max-width: 475px) {
+    .size415 {
+        width: 400px;
+    }
+}
+
+@media (min-width: 509px) {
+    .size415 {
+        width: 500px;
+    }
+}

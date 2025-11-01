@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salim Khan - Full-Stack Developer Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f8f9fa;
+        }
+        
+        .resume-container {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 50px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c5aa0;
+        }
+        
+        .name {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .title {
+            font-size: 1.2em;
+            color: #5a6c7d;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .location {
+            font-size: 1em;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 1em;
+            color: #495057;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c5aa0;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #495057;
+            text-align: justify;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .skills-category {
+            margin-bottom: 15px;
+        }
+        
+        .skills-category h4 {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: 1px solid #bbdefb;
+        }
+        
+        .experience-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .job-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c5aa0;
+        }
+        
+        .company {
+            font-style: italic;
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+        
+        .date {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.95em;
+        }
+        
+        .job-description {
+            color: #495057;
+        }
+        
+        .job-description ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .job-description li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        
+        .education-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .degree {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 5px;
+        }
+        
+        .university {
+            color: #6c757d;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .education-details {
+            color: #495057;
+        }
+        
+        .education-details ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .education-details li {
+            margin-bottom: 4px;
+        }
+        
+        .links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2c5aa0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .link-item:hover {
+            color: #1a4480;
+        }
+        
+        .projects {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #2c5aa0;
+        }
+        
+        .project-item {
+            margin-bottom: 15px;
+        }
+        
+        .project-name {
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-bottom: 5px;
+        }
+        
+        .project-description {
+            color: #495057;
+            font-size: 0.95em;
+        }
+        
+        @media (max-width: 768px) {
+            .resume-container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            
+            .name {
+                font-size: 2.2em;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .job-header {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="resume-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="name">Salim Khan</h1>
+            <p class="title">Full-Stack Developer</p>
+            <p class="location">Peshawar, Khyber Pakhtunkhwa, Pakistan</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span>📞</span>
+                    <span>+92 320 1970649</span>
+                </div>
+                <div class="contact-item">
+                    <span>✉️</span>
+                    <span>salimkhandev@gmail.com</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Professional Summary -->
+        <section class="section">
+            <h2 class="section-title">Professional Summary</h2>
+            <p class="summary">
+                Experienced Full-Stack Developer with expertise in React.js, Next.js, Node.js, and TypeScript. 
+                Passionate about building scalable web applications and improving developer experience through 
+                clean architecture, comprehensive testing, and performance optimization. Specialized in developing 
+                Progressive Web Applications (PWA), real-time applications, and offline-first solutions using 
+                modern technologies including MongoDB, PostgreSQL, and Redis.
+            </p>
+        </section>
+
+        <!-- Contact Links -->
+        <section class="section">
+            <h2 class="section-title">Professional Profiles</h2>
+            <div class="links">
+                <a href="https://github.com/salimkhandev" class="link-item" target="_blank">
+                    <span>🔗</span>
+                    <span>GitHub: github.com/salimkhandev</span>
+                </a>
+                <a href="https://linkedin.com/in/salimkhandev" class="link-item" target="_blank">
+                    <span>🔗</span>
+                    <span>LinkedIn: linkedin.com/in/salimkhandev</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Education -->
+        <section class="section">
+            <h2 class="section-title">Education</h2>
+            <div class="education-item">
+                <div class="degree">Bachelor of Science in Software Engineering</div>
+                <div class="university">Islamia College University, Peshawar, Khyber Pakhtunkhwa, Pakistan</div>
+                <div class="education-details">
+                    <p><strong>Expected Graduation:</strong> January 2026</p>
+                    <ul>
+                        <li>Currently in progress with excellent academic standing</li>
+                        <li>Ranked among top 3 students in the department</li>
+                        <li><strong>GPA:</strong> 3.73/4.00</li>
+                        <li><strong>Relevant Coursework:</strong> Data Structures & Algorithms, Web Development, Database Systems, Software Engineering, Software Construction</li>
+                </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Skills -->
+        <section class="section">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-grid">
+                <div class="skills-category">
+                    <h4>Frontend Technologies</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">Next.js 14+</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">JavaScript (ES6+)</span>
+                        <span class="skill-tag">Tailwind CSS</span>
+                        <span class="skill-tag">HTML5/CSS3</span>
+                    </div>
+                </div>
+                <div class="skills-category">
+                    <h4>Backend Technologies</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Express.js</span>
+                        <span class="skill-tag">REST APIs</span>
+                        <span class="skill-tag">Socket.IO</span>
+                        <span class="skill-tag">JWT Authentication</span>
+                    </div>
+                </div>
+                <div class="skills-category">
+                    <h4>Databases</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">Redis</span>
+                        <span class="skill-tag">IndexedDB</span>
+                    </div>
+                </div>
+                <div class="skills-category">
+                    <h4>Tools & Platforms</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">Git/GitHub</span>
+                        <span class="skill-tag">Vercel</span>
+                        <span class="skill-tag">Postman</span>
+                        <span class="skill-tag">Cloudinary</span>
+                        <span class="skill-tag">Docker</span>
+                    </div>
+                </div>
+                <div class="skills-category">
+                    <h4>Concepts & Practices</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">Progressive Web Apps</span>
+                        <span class="skill-tag">Real-time Applications</span>
+                        <span class="skill-tag">Testing & Linting</span>
+                        <span class="skill-tag">Clean Architecture</span>
+                        <span class="skill-tag">Performance Optimization</span>
+                    </div>
+                </div>
+                <div class="skills-category">
+                    <h4>Soft Skills</h4>
+                    <div class="skills-list">
+                        <span class="skill-tag">Problem Solving</span>
+                        <span class="skill-tag">Team Collaboration</span>
+                        <span class="skill-tag">Code Review</span>
+                        <span class="skill-tag">Continuous Learning</span>
+                        <span class="skill-tag">Agile Development</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Professional Experience -->
+        <section class="section">
+            <h2 class="section-title">Professional Experience</h2>
+            <div class="experience-item">
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">Software Development Intern</div>
+                        <div class="company">Bit Technologies, Peshawar, Khyber Pakhtunkhwa, Pakistan</div>
+                    </div>
+                    <div class="date">February 2024 - May 2024</div>
+                </div>
+                <div class="job-description">
+                    <ul>
+                        <li>Developed and maintained web applications using <strong>React.js</strong> and <strong>Next.js</strong> under senior developer mentorship</li>
+                        <li>Implemented <strong>professional development workflows</strong> including Git version control, code reviews, and collaborative development practices</li>
+                        <li>Built responsive user interfaces and integrated <strong>RESTful APIs</strong> for seamless data flow</li>
+                        <li>Participated in <strong>component-based architecture</strong> design and implementation of scalable frontend solutions</li>
+                        <li>Contributed to project documentation and maintained code quality standards</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notable Projects -->
+        <section class="section">
+            <h2 class="section-title">Notable Projects</h2>
+            <div class="projects">
+                <div class="project-item">
+                    <div class="project-name">Task Tame - Productivity Management App</div>
+                    <div class="project-description">
+                        Developed a full-featured note-taking and task management application with offline support, 
+                        theme customization, and real-time synchronization using React, Tailwind CSS, and localStorage.
+                    </div>
+                </div>
+                <div class="project-item">
+                    <div class="project-name">Attendance Management System</div>
+                    <div class="project-description">
+                        Created a comprehensive attendance tracking system with data visualization charts, 
+                        user authentication, and database integration using React and PostgreSQL.
+                    </div>
+                </div>
+                <div class="project-item">
+                    <div class="project-name">Automation Tools & Scripts</div>
+                    <div class="project-description">
+                        Built various productivity tools and automation scripts to streamline daily workflows 
+                        and improve efficiency in development processes.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Information -->
+        <section class="section">
+            <h2 class="section-title">Additional Information</h2>
+            <p style="color: #495057; font-style: italic;">
+                Passionate about continuous learning and staying updated with the latest web technologies. 
+                Actively contribute to open-source projects and enjoy building tools that solve real-world problems. 
+                Committed to writing clean, maintainable code and following industry best practices.
+            </p>
+        </section>
+    </div>
+</body>
+
+</html>
