@@ -90,7 +90,11 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
     
     if (sigResponse.ok) {
       const sigData = await sigResponse.json();
-      uploadParams = sigData;
+      if (sigData.success && sigData.signature) {
+        uploadParams = sigData;
+      }
+    } else {
+      console.warn(`Failed to get signed upload params (${sigResponse.status}), trying unsigned upload`);
     }
   } catch (error) {
     console.warn('Failed to get signed upload params, trying unsigned:', error);
@@ -119,7 +123,10 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
     }
   } else {
     // Fallback to unsigned upload with preset
-    formData.append('upload_preset', config.uploadPreset || 'unsigned_video');
+    if (!config.uploadPreset) {
+      throw new Error('Cloudinary upload preset is required for unsigned uploads. Please configure CLOUDINARY_UPLOAD_PRESET in your environment variables or ensure the signature endpoint is working.');
+    }
+    formData.append('upload_preset', config.uploadPreset);
     formData.append('folder', folder);
     formData.append('resource_type', 'video');
   }
@@ -215,7 +222,11 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
     
     if (sigResponse.ok) {
       const sigData = await sigResponse.json();
-      uploadParams = sigData;
+      if (sigData.success && sigData.signature) {
+        uploadParams = sigData;
+      }
+    } else {
+      console.warn(`Failed to get signed upload params (${sigResponse.status}), trying unsigned upload`);
     }
   } catch (error) {
     console.warn('Failed to get signed upload params, trying unsigned:', error);
@@ -244,7 +255,10 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
     }
   } else {
     // Fallback to unsigned upload with preset
-    formData.append('upload_preset', config.uploadPreset || 'unsigned_image');
+    if (!config.uploadPreset) {
+      throw new Error('Cloudinary upload preset is required for unsigned uploads. Please configure CLOUDINARY_UPLOAD_PRESET in your environment variables or ensure the signature endpoint is working.');
+    }
+    formData.append('upload_preset', config.uploadPreset);
     formData.append('folder', folder);
     formData.append('resource_type', 'image');
   }

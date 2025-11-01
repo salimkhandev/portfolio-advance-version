@@ -10,30 +10,38 @@ export const useFirstInteractionFullscreen = () => {
   const hasTriggered = useRef(false);
 
   const requestFullscreenHandler = () => {
-    if (hasTriggered.current) return;
+    if (hasTriggered.current) return Promise.resolve();
     hasTriggered.current = true;
 
     const elem = document.documentElement;
 
     try {
       if (elem.requestFullscreen) {
-        elem.requestFullscreen({ navigationUI: "hide" }).catch(() => {
-          hasTriggered.current = false;
-        });
+        const promise = elem.requestFullscreen({ navigationUI: "hide" });
+        if (promise && typeof promise.catch === 'function') {
+          promise.catch(() => {
+            hasTriggered.current = false;
+          });
+        }
+        return promise || Promise.resolve();
       } else if (elem.webkitRequestFullscreen) {
         // Safari
         elem.webkitRequestFullscreen();
+        return Promise.resolve();
       } else if (elem.mozRequestFullScreen) {
         // Firefox
         elem.mozRequestFullScreen();
+        return Promise.resolve();
       } else if (elem.msRequestFullscreen) {
         // IE/Edge
         elem.msRequestFullscreen();
+        return Promise.resolve();
       }
     } catch (error) {
       console.log('Fullscreen error:', error);
       hasTriggered.current = false;
     }
+    return Promise.resolve();
   };
 
   // Monitor fullscreen state changes
@@ -66,10 +74,13 @@ export const useFirstInteractionFullscreen = () => {
         // Note: The delay may cause the fullscreen API to require a direct user gesture
         // This is expected behavior - fullscreen will trigger on next user interaction
         setTimeout(() => {
-          requestFullscreenHandler().catch(() => {
-            // Silently fail - fullscreen requires direct user gesture
-            // It will work on the next click/touch
-          });
+          const promise = requestFullscreenHandler();
+          if (promise && typeof promise.catch === 'function') {
+            promise.catch(() => {
+              // Silently fail - fullscreen requires direct user gesture
+              // It will work on the next click/touch
+            });
+          }
         }, 50);
       }
     };
