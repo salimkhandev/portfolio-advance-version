@@ -61,11 +61,17 @@ export const useFirstInteractionFullscreen = () => {
 
     const trigger = () => {
       if (!hasTriggered.current && !checkFullscreen()) {
-        requestFullscreenHandler();
+        // Use setTimeout to ensure the click action fully completes first
+        // This allows all click handlers, navigation, and UI updates to finish
+        // 50ms delay is enough for click handlers but still within user gesture context
+        setTimeout(() => {
+          requestFullscreenHandler();
+        }, 50);
       }
     };
 
     // Only the events that ACTUALLY work as user gestures on all devices
+    // Using capture: false (default) so event reaches target first, then bubbles to us
     const events = [
       'click',
       'mousedown',
@@ -74,13 +80,14 @@ export const useFirstInteractionFullscreen = () => {
       'pointerdown'
     ];
 
+    // Add listeners in bubble phase (default) so target handlers run first
     events.forEach(event => {
-      document.addEventListener(event, trigger, { once: true, capture: true });
+      document.addEventListener(event, trigger, { once: true });
     });
 
     return () => {
       events.forEach(event => {
-        document.removeEventListener(event, trigger, { capture: true });
+        document.removeEventListener(event, trigger);
       });
     };
   }, []);
