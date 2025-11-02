@@ -76,6 +76,7 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
 
   // Get signed upload parameters from backend
   let uploadParams;
+  let signatureError = null;
   try {
     const sigResponse = await fetch(`${API_BASE_URL}/cloudinary-signature`, {
       method: 'POST',
@@ -92,12 +93,19 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
       const sigData = await sigResponse.json();
       if (sigData.success && sigData.signature) {
         uploadParams = sigData;
+      } else {
+        signatureError = sigData.message || 'Invalid signature response';
       }
     } else {
-      console.warn(`Failed to get signed upload params (${sigResponse.status}), trying unsigned upload`);
+      const statusText = sigResponse.status === 404 
+        ? 'Signature endpoint not found (404). Please ensure the backend is deployed and the route exists.'
+        : `Signature endpoint returned ${sigResponse.status}`;
+      signatureError = statusText;
+      console.warn(`Failed to get signed upload params (${sigResponse.status}): ${statusText}`);
     }
   } catch (error) {
-    console.warn('Failed to get signed upload params, trying unsigned:', error);
+    signatureError = error.message || 'Network error';
+    console.warn('Failed to get signed upload params:', error);
   }
 
   const formData = new FormData();
@@ -124,7 +132,15 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
   } else {
     // Fallback to unsigned upload with preset
     if (!config.uploadPreset) {
-      throw new Error('Cloudinary upload preset is required for unsigned uploads. Please configure CLOUDINARY_UPLOAD_PRESET in your environment variables or ensure the signature endpoint is working.');
+      const errorMsg = signatureError
+        ? `Signature endpoint failed: ${signatureError}. Unable to use signed uploads. `
+        : 'Signature endpoint unavailable. ';
+      throw new Error(
+        errorMsg + 
+        'Please either: (1) Configure CLOUDINARY_UPLOAD_PRESET in your backend environment variables for fallback unsigned uploads, ' +
+        'or (2) Fix the signature endpoint at /api/cloudinary-signature. ' +
+        'Check that your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set.'
+      );
     }
     formData.append('upload_preset', config.uploadPreset);
     formData.append('folder', folder);
@@ -208,6 +224,7 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
 
   // Get signed upload parameters from backend
   let uploadParams;
+  let signatureError = null;
   try {
     const sigResponse = await fetch(`${API_BASE_URL}/cloudinary-signature`, {
       method: 'POST',
@@ -224,12 +241,19 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
       const sigData = await sigResponse.json();
       if (sigData.success && sigData.signature) {
         uploadParams = sigData;
+      } else {
+        signatureError = sigData.message || 'Invalid signature response';
       }
     } else {
-      console.warn(`Failed to get signed upload params (${sigResponse.status}), trying unsigned upload`);
+      const statusText = sigResponse.status === 404 
+        ? 'Signature endpoint not found (404). Please ensure the backend is deployed and the route exists.'
+        : `Signature endpoint returned ${sigResponse.status}`;
+      signatureError = statusText;
+      console.warn(`Failed to get signed upload params (${sigResponse.status}): ${statusText}`);
     }
   } catch (error) {
-    console.warn('Failed to get signed upload params, trying unsigned:', error);
+    signatureError = error.message || 'Network error';
+    console.warn('Failed to get signed upload params:', error);
   }
 
   const formData = new FormData();
@@ -256,7 +280,15 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
   } else {
     // Fallback to unsigned upload with preset
     if (!config.uploadPreset) {
-      throw new Error('Cloudinary upload preset is required for unsigned uploads. Please configure CLOUDINARY_UPLOAD_PRESET in your environment variables or ensure the signature endpoint is working.');
+      const errorMsg = signatureError
+        ? `Signature endpoint failed: ${signatureError}. Unable to use signed uploads. `
+        : 'Signature endpoint unavailable. ';
+      throw new Error(
+        errorMsg + 
+        'Please either: (1) Configure CLOUDINARY_UPLOAD_PRESET in your backend environment variables for fallback unsigned uploads, ' +
+        'or (2) Fix the signature endpoint at /api/cloudinary-signature. ' +
+        'Check that your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set.'
+      );
     }
     formData.append('upload_preset', config.uploadPreset);
     formData.append('folder', folder);
