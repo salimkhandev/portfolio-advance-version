@@ -5,9 +5,7 @@ const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        console.log(username, password);
         const user = await User.findOne({ username });
-        console.log(user);
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (user.password !== password)
@@ -19,16 +17,14 @@ const loginUser = async (req, res) => {
             { expiresIn: "1d" }
         );
 
-        // ✅ set cookie here
-        // Determine if we're in production (HTTPS) or development (HTTP)
         const isProduction = process.env.NODE_ENV === 'production' || req.secure || req.headers['x-forwarded-proto'] === 'https';
         
         res.cookie("token", token, {
-            httpOnly: true, // More secure - prevents client-side JavaScript access
-            secure: isProduction, // true in production (HTTPS), false in development
-            sameSite: isProduction ? "None" : "Lax", // "None" required for cross-site cookies in production
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
-            path: "/" // Available for all paths
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "None" : "Lax",
+            maxAge: 24 * 60 * 60 * 1000,
+            path: "/"
         });
 
         return res.status(200).json({
@@ -41,10 +37,8 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-    // Determine if we're in production (HTTPS) or development (HTTP)
     const isProduction = process.env.NODE_ENV === 'production' || req.secure || req.headers['x-forwarded-proto'] === 'https';
     
-    // Clear cookie with same options as when it was set
     res.clearCookie("token", {
         httpOnly: true,
         secure: isProduction,
@@ -59,7 +53,6 @@ const logoutUser = (req, res) => {
 };
 
 const verifyUser = (req, res) => {
-    // This route is protected, so if we reach here, user is authenticated
     res.status(200).json({
         success: true,
         user: { username: req.user.username }

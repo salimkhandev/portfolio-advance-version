@@ -1,11 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 
-// Use memory storage for serverless compatibility (Vercel, etc.)
-// Files are stored in memory as Buffer, then uploaded directly to Cloudinary
 const storage = multer.memoryStorage();
 
-// File filter for videos
 const videoFilter = (req, file, cb) => {
   const allowedTypes = /mp4|mov|avi|wmv|flv|webm|mkv/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -18,7 +15,6 @@ const videoFilter = (req, file, cb) => {
   }
 };
 
-// File filter for images
 const imageFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -31,7 +27,6 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer for videos
 const uploadVideo = multer({
   storage: storage,
   limits: {
@@ -40,7 +35,6 @@ const uploadVideo = multer({
   fileFilter: videoFilter
 });
 
-// Configure multer for images (supports both 'image' and 'thumbnail' fieldnames)
 const uploadImage = multer({
   storage: storage,
   limits: {
@@ -49,9 +43,6 @@ const uploadImage = multer({
   fileFilter: imageFilter
 });
 
-// Configure multer for multiple file types (videos and images)
-// Note: Vercel has a 4.5MB limit for request bodies in serverless functions
-// For larger files, consider uploading directly to Cloudinary from frontend
 const uploadMultiple = multer({
   storage: storage,
   limits: {
@@ -62,11 +53,9 @@ const uploadMultiple = multer({
     files: 2 // Maximum number of files (video + thumbnail)
   },
   fileFilter: (req, file, cb) => {
-    // Check if it's a video
     if (file.fieldname === 'video') {
       return videoFilter(req, file, cb);
     }
-    // Check if it's an image/thumbnail
     if (file.fieldname === 'thumbnail') {
       return imageFilter(req, file, cb);
     }

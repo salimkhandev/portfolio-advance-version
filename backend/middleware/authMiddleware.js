@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
-    // Get token from cookies instead of headers
     const token = req.cookies?.token;
 
     if (!token) {
@@ -9,13 +8,8 @@ const protect = (req, res, next) => {
     }
 
     try {
-        // Verify the JWT using your secret key
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
-        // Attach decoded user data to request
         req.user = decoded;
-
-        // Continue to next middleware or route
         next();
     } catch (error) {
         return res.status(403).json({ message: "Invalid or expired token" });

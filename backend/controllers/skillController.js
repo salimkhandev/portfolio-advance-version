@@ -13,7 +13,6 @@ const extractValidationErrors = (error) => {
     return null;
 };
 
-// Get all skills (public)
 const getSkills = async (req, res) => {
     try {
         const skills = await Skill.find().sort({ createdAt: -1 });
@@ -23,16 +22,13 @@ const getSkills = async (req, res) => {
             skills
         });
     } catch (error) {
-        console.error("Error fetching skills:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching skills",
-            error: error.message
+            message: "Error fetching skills"
         });
     }
 };
 
-// Get single skill by ID (public)
 const getSkill = async (req, res) => {
     try {
         const { id } = req.params;
@@ -57,25 +53,15 @@ const getSkill = async (req, res) => {
             skill
         });
     } catch (error) {
-        console.error("Error fetching skill:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching skill",
-            error: error.message
+            message: "Error fetching skill"
         });
     }
 };
 
-// Add skill (protected)
 const addSkill = async (req, res) => {
     try {
-        console.log('=== Add Skill Request ===');
-        console.log('req.body:', req.body);
-        console.log('req.file:', req.file);
-        console.log('req.files:', req.files);
-        console.log('req.body keys:', Object.keys(req.body));
-
-        // Parse FormData arrays (topics)
         if (req.body.topics && typeof req.body.topics === 'string') {
             try {
                 req.body.topics = JSON.parse(req.body.topics);
@@ -98,10 +84,6 @@ const addSkill = async (req, res) => {
         });
         if (topics.length > 0) req.body.topics = topics.filter(Boolean);
 
-        console.log('After parsing - req.body.topics:', req.body.topics);
-        console.log('req.body.name:', req.body.name);
-
-        // Validate required fields
         if (!req.body.name || req.body.name.trim() === '') {
             return res.status(400).json({
                 success: false,
@@ -116,20 +98,14 @@ const addSkill = async (req, res) => {
             });
         }
 
-        // Handle image upload - uploadImage.single('image') puts file in req.file
         if (!req.file) {
-            console.log('ERROR: No file uploaded');
             return res.status(400).json({
                 success: false,
                 message: "Skill icon image is required"
             });
         }
-        
-        console.log('File uploaded successfully:', req.file.originalname);
-        console.log('File buffer size:', req.file.buffer ? req.file.buffer.length : 'No buffer');
 
         try {
-            // Use buffer (memory storage) or path (disk storage)
             const fileInput = req.file.buffer || req.file.path;
             const imageResult = await uploadImageToCloudinary(
                 fileInput,
@@ -137,14 +113,12 @@ const addSkill = async (req, res) => {
             );
             req.body.imageUrl = imageResult.url;
             req.body.cloudinaryImagePublicId = imageResult.public_id;
-        } catch (uploadError) {
-            console.error("Error uploading image to Cloudinary:", uploadError);
-            return res.status(500).json({
-                success: false,
-                message: "Error uploading image to Cloudinary",
-                error: uploadError.message
-            });
-        }
+            } catch (uploadError) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Error uploading image to Cloudinary"
+                });
+            }
 
         const skill = new Skill(req.body);
         await skill.save();
@@ -155,9 +129,6 @@ const addSkill = async (req, res) => {
             skill
         });
     } catch (error) {
-        console.error("Error adding skill:", error);
-
-        // Handle validation errors
         const validationErrors = extractValidationErrors(error);
         if (validationErrors) {
             return res.status(400).json({
@@ -169,13 +140,11 @@ const addSkill = async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: "Error adding skill",
-            error: error.message
+            message: "Error adding skill"
         });
     }
 };
 
-// Update skill (protected)
 const updateSkill = async (req, res) => {
     try {
         const { id } = req.params;
@@ -187,7 +156,6 @@ const updateSkill = async (req, res) => {
             });
         }
 
-        // Get existing skill to check for old image
         const existingSkill = await Skill.findById(id);
         if (!existingSkill) {
             return res.status(404).json({
@@ -219,16 +187,12 @@ const updateSkill = async (req, res) => {
         });
         if (topics.length > 0) req.body.topics = topics.filter(Boolean);
 
-        // Handle image upload/delete - uploadImage.single('image') puts file in req.file
         if (req.file) {
-            // Delete old image from Cloudinary if it exists
             if (existingSkill.cloudinaryImagePublicId) {
                 await deleteImageFromCloudinary(existingSkill.cloudinaryImagePublicId);
             }
 
-            // Upload new image to Cloudinary
             try {
-                // Use buffer (memory storage) or path (disk storage)
                 const fileInput = req.file.buffer || req.file.path;
                 const imageResult = await uploadImageToCloudinary(
                     fileInput,
@@ -237,15 +201,12 @@ const updateSkill = async (req, res) => {
                 req.body.imageUrl = imageResult.url;
                 req.body.cloudinaryImagePublicId = imageResult.public_id;
             } catch (uploadError) {
-                console.error("Error uploading image to Cloudinary:", uploadError);
                 return res.status(500).json({
                     success: false,
-                    message: "Error uploading image to Cloudinary",
-                    error: uploadError.message
+                    message: "Error uploading image to Cloudinary"
                 });
             }
         } else if (req.body.removeImage === 'true' || req.body.imageUrl === '') {
-            // If explicitly removing image or setting to empty
             if (existingSkill.cloudinaryImagePublicId) {
                 await deleteImageFromCloudinary(existingSkill.cloudinaryImagePublicId);
                 req.body.imageUrl = '';
@@ -265,9 +226,6 @@ const updateSkill = async (req, res) => {
             skill: updatedSkill
         });
     } catch (error) {
-        console.error("Error updating skill:", error);
-
-        // Handle validation errors
         const validationErrors = extractValidationErrors(error);
         if (validationErrors) {
             return res.status(400).json({
@@ -279,13 +237,11 @@ const updateSkill = async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: "Error updating skill",
-            error: error.message
+            message: "Error updating skill"
         });
     }
 };
 
-// Delete skill (protected)
 const deleteSkill = async (req, res) => {
     try {
         const { id } = req.params;
@@ -297,7 +253,6 @@ const deleteSkill = async (req, res) => {
             });
         }
 
-        // Get skill first to access Cloudinary public_id
         const skill = await Skill.findById(id);
         
         if (!skill) {
@@ -307,12 +262,10 @@ const deleteSkill = async (req, res) => {
             });
         }
 
-        // Delete image from Cloudinary if it exists
         if (skill.cloudinaryImagePublicId) {
             await deleteImageFromCloudinary(skill.cloudinaryImagePublicId);
         }
 
-        // Delete skill from database
         await Skill.findByIdAndDelete(id);
 
         res.status(200).json({
@@ -321,11 +274,9 @@ const deleteSkill = async (req, res) => {
             skill
         });
     } catch (error) {
-        console.error("Error deleting skill:", error);
         res.status(500).json({
             success: false,
-            message: "Error deleting skill",
-            error: error.message
+            message: "Error deleting skill"
         });
     }
 };

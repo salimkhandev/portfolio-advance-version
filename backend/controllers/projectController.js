@@ -7,7 +7,6 @@ const {
   deleteImageFromCloudinary 
 } = require("../utils/cloudinaryUpload");
 
-// Helper function to extract validation errors
 const extractValidationErrors = (error) => {
     if (error.name === 'ValidationError') {
         const errors = {};
@@ -19,7 +18,6 @@ const extractValidationErrors = (error) => {
     return null;
 };
 
-// Get all projects (public)
 const getProjects = async (req, res) => {
     try {
         const projects = await Project.find().sort({ createdAt: -1 });
@@ -29,16 +27,13 @@ const getProjects = async (req, res) => {
             projects
         });
     } catch (error) {
-        console.error("Error fetching projects:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching projects",
-            error: error.message
+            message: "Error fetching projects"
         });
     }
 };
 
-// Get single project by ID (public)
 const getProject = async (req, res) => {
     try {
         const { id } = req.params;
@@ -64,25 +59,18 @@ const getProject = async (req, res) => {
             project
         });
     } catch (error) {
-        console.error("Error fetching project:", error);
         res.status(500).json({
             success: false,
-            message: "Error fetching project",
-            error: error.message
+            message: "Error fetching project"
         });
     }
 };
 
-// Add project (protected)
-// Accepts JSON with Cloudinary URLs (frontend uploads directly to Cloudinary to bypass Vercel limits)
-// Similar to Next.js pattern: frontend uploads to Cloudinary, backend just saves URLs
 const addProject = async (req, res) => {
     try {
         const contentType = req.headers["content-type"] || "";
         
-        // JSON path: accept metadata after a direct-to-Cloudinary upload (bypasses Vercel limits)
         if (contentType.includes("application/json")) {
-            // Parse array fields if they come as stringified JSON or arrays
             if (req.body.features && typeof req.body.features === 'string') {
                 try {
                     req.body.features = JSON.parse(req.body.features);
@@ -135,8 +123,6 @@ const addProject = async (req, res) => {
             });
         }
 
-        // Multipart path (legacy fallback for local dev or small files only)
-        // Parse FormData arrays (features, tools)
         if (req.body.features && typeof req.body.features === 'string') {
             try {
                 req.body.features = JSON.parse(req.body.features);
@@ -175,7 +161,6 @@ const addProject = async (req, res) => {
         if (features.length > 0) req.body.features = features.filter(Boolean);
         if (tools.length > 0) req.body.tools = tools.filter(Boolean);
 
-        // Handle file uploads (fallback - not recommended for Vercel serverless)
         if (req.files && req.files['video'] && req.files['video'][0]) {
             try {
                 const videoFile = req.files['video'][0];
@@ -219,9 +204,6 @@ const addProject = async (req, res) => {
             project
         });
     } catch (error) {
-        console.error("Error adding project:", error);
-
-        // Handle validation errors
         const validationErrors = extractValidationErrors(error);
         if (validationErrors) {
             return res.status(400).json({
@@ -231,16 +213,13 @@ const addProject = async (req, res) => {
             });
         }
 
-        // Handle other errors
         res.status(500).json({
             success: false,
-            message: "Error adding project",
-            error: error.message
+            message: "Error adding project"
         });
     }
 };
 
-// Update project (protected)
 const updateProject = async (req, res) => {
     try {
         const { id } = req.params;
@@ -252,7 +231,6 @@ const updateProject = async (req, res) => {
             });
         }
 
-        // Get existing project to check for old video
         const existingProject = await Project.findById(id);
         if (!existingProject) {
             return res.status(404).json({
@@ -300,37 +278,31 @@ const updateProject = async (req, res) => {
         if (features.length > 0) req.body.features = features.filter(Boolean);
         if (tools.length > 0) req.body.tools = tools.filter(Boolean);
 
-        // Handle video - frontend uploads directly to Cloudinary, we just manage the URLs
         if (req.body.cloudinaryVideoUrl && req.body.cloudinaryVideoPublicId) {
-            // Frontend already uploaded to Cloudinary
-            // Delete old video if it's different from the new one
             if (existingProject.cloudinaryVideoPublicId && 
                 existingProject.cloudinaryVideoPublicId !== req.body.cloudinaryVideoPublicId) {
                 try {
                     await deleteVideoFromCloudinary(existingProject.cloudinaryVideoPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting old video from Cloudinary:", deleteError);
                     // Continue - don't fail the update if deletion fails
                 }
             }
         } else if (req.body.removeVideo === 'true' || req.body.cloudinaryVideoUrl === '') {
-            // If explicitly removing video
             if (existingProject.cloudinaryVideoPublicId) {
                 try {
                     await deleteVideoFromCloudinary(existingProject.cloudinaryVideoPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting video from Cloudinary:", deleteError);
+                    // Silent fail
                 }
                 req.body.cloudinaryVideoUrl = '';
                 req.body.cloudinaryVideoPublicId = '';
             }
         } else if (req.files && req.files['video'] && req.files['video'][0]) {
-            // Legacy fallback: server-side upload (not recommended for Vercel)
             if (existingProject.cloudinaryVideoPublicId) {
                 try {
                     await deleteVideoFromCloudinary(existingProject.cloudinaryVideoPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting old video:", deleteError);
+                    // Silent fail
                 }
             }
             try {
@@ -349,37 +321,31 @@ const updateProject = async (req, res) => {
             }
         }
 
-        // Handle thumbnail - frontend uploads directly to Cloudinary, we just manage the URLs
         if (req.body.cloudinaryThumbnailUrl && req.body.cloudinaryThumbnailPublicId) {
-            // Frontend already uploaded to Cloudinary
-            // Delete old thumbnail if it's different from the new one
             if (existingProject.cloudinaryThumbnailPublicId && 
                 existingProject.cloudinaryThumbnailPublicId !== req.body.cloudinaryThumbnailPublicId) {
                 try {
                     await deleteImageFromCloudinary(existingProject.cloudinaryThumbnailPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting old thumbnail from Cloudinary:", deleteError);
                     // Continue - don't fail the update if deletion fails
                 }
             }
         } else if (req.body.removeThumbnail === 'true' || req.body.cloudinaryThumbnailUrl === '') {
-            // If explicitly removing thumbnail
             if (existingProject.cloudinaryThumbnailPublicId) {
                 try {
                     await deleteImageFromCloudinary(existingProject.cloudinaryThumbnailPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting thumbnail from Cloudinary:", deleteError);
+                    // Silent fail
                 }
                 req.body.cloudinaryThumbnailUrl = '';
                 req.body.cloudinaryThumbnailPublicId = '';
             }
         } else if (req.files && req.files['thumbnail'] && req.files['thumbnail'][0]) {
-            // Legacy fallback: server-side upload (not recommended for Vercel)
             if (existingProject.cloudinaryThumbnailPublicId) {
                 try {
                     await deleteImageFromCloudinary(existingProject.cloudinaryThumbnailPublicId);
                 } catch (deleteError) {
-                    console.warn("Error deleting old thumbnail:", deleteError);
+                    // Silent fail
                 }
             }
             try {
@@ -410,9 +376,6 @@ const updateProject = async (req, res) => {
             project: updatedProject
         });
     } catch (error) {
-        console.error("Error updating project:", error);
-
-        // Handle validation errors
         const validationErrors = extractValidationErrors(error);
         if (validationErrors) {
             return res.status(400).json({
@@ -422,16 +385,13 @@ const updateProject = async (req, res) => {
             });
         }
 
-        // Handle other errors
         res.status(500).json({
             success: false,
-            message: "Error updating project",
-            error: error.message
+            message: "Error updating project"
         });
     }
 };
 
-// Delete project (protected)
 const deleteProject = async (req, res) => {
     try {
         const { id } = req.params;
@@ -443,7 +403,6 @@ const deleteProject = async (req, res) => {
             });
         }
 
-        // Get project first to access Cloudinary public_id
         const project = await Project.findById(id);
         
         if (!project) {
@@ -453,17 +412,14 @@ const deleteProject = async (req, res) => {
             });
         }
 
-        // Delete video from Cloudinary if it exists
         if (project.cloudinaryVideoPublicId) {
             await deleteVideoFromCloudinary(project.cloudinaryVideoPublicId);
         }
 
-        // Delete thumbnail from Cloudinary if it exists
         if (project.cloudinaryThumbnailPublicId) {
             await deleteImageFromCloudinary(project.cloudinaryThumbnailPublicId);
         }
 
-        // Delete project from database
         await Project.findByIdAndDelete(id);
 
         res.status(200).json({
@@ -472,11 +428,9 @@ const deleteProject = async (req, res) => {
             project
         });
     } catch (error) {
-        console.error("Error deleting project:", error);
         res.status(500).json({
             success: false,
-            message: "Error deleting project",
-            error: error.message
+            message: "Error deleting project"
         });
     }
 };

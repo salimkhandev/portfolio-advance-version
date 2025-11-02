@@ -8,20 +8,6 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Test connection function (only run in local development, not on Vercel)
-async function testCloudinaryConnection() {
-    try {
-        const result = await cloudinary.v2.api.ping();
-        console.log('Cloudinary connected:', result);
-    } catch (error) {
-        console.error('Cloudinary connection failed:', error.message);
-    }
-}
-
-// Only test connection in local development, not on serverless (Vercel)
-if (!process.env.VERCEL) {
-    testCloudinaryConnection();
-}
 
 module.exports = cloudinary.v2;
 
