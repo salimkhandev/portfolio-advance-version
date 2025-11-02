@@ -130,21 +130,15 @@ export const uploadVideoToCloudinary = async (file, folder = 'project-videos', o
       formData.append('resource_type', uploadParams.resource_type);
     }
   } else {
-    // Fallback to unsigned upload with preset
-    if (!config.uploadPreset) {
-      const errorMsg = signatureError
-        ? `Signature endpoint failed: ${signatureError}. Unable to use signed uploads. `
-        : 'Signature endpoint unavailable. ';
-      throw new Error(
-        errorMsg + 
-        'Please either: (1) Configure CLOUDINARY_UPLOAD_PRESET in your backend environment variables for fallback unsigned uploads, ' +
-        'or (2) Fix the signature endpoint at /api/cloudinary-signature. ' +
-        'Check that your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set.'
-      );
-    }
-    formData.append('upload_preset', config.uploadPreset);
-    formData.append('folder', folder);
-    formData.append('resource_type', 'video');
+    // Signature endpoint failed - cannot proceed without it
+    const errorMsg = signatureError
+      ? `Signature endpoint failed: ${signatureError}. `
+      : 'Signature endpoint unavailable. ';
+    throw new Error(
+      errorMsg + 
+      'Please fix the signature endpoint at /api/cloudinary-signature. ' +
+      'Ensure your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set in your backend environment variables.'
+    );
   }
   
   formData.append('chunk_size', '6000000'); // 6MB chunks for large files
@@ -278,21 +272,15 @@ export const uploadImageToCloudinary = async (file, folder = 'project-thumbnails
       formData.append('resource_type', uploadParams.resource_type);
     }
   } else {
-    // Fallback to unsigned upload with preset
-    if (!config.uploadPreset) {
-      const errorMsg = signatureError
-        ? `Signature endpoint failed: ${signatureError}. Unable to use signed uploads. `
-        : 'Signature endpoint unavailable. ';
-      throw new Error(
-        errorMsg + 
-        'Please either: (1) Configure CLOUDINARY_UPLOAD_PRESET in your backend environment variables for fallback unsigned uploads, ' +
-        'or (2) Fix the signature endpoint at /api/cloudinary-signature. ' +
-        'Check that your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set.'
-      );
-    }
-    formData.append('upload_preset', config.uploadPreset);
-    formData.append('folder', folder);
-    formData.append('resource_type', 'image');
+    // Signature endpoint failed - cannot proceed without it
+    const errorMsg = signatureError
+      ? `Signature endpoint failed: ${signatureError}. `
+      : 'Signature endpoint unavailable. ';
+    throw new Error(
+      errorMsg + 
+      'Please fix the signature endpoint at /api/cloudinary-signature. ' +
+      'Ensure your backend is deployed and CLOUDINARY_API_SECRET, CLOUDINARY_API_KEY, and CLOUDINARY_CLOUD_NAME are set in your backend environment variables.'
+    );
   }
 
   try {
