@@ -2,6 +2,7 @@ import { faClock, faCode, faExternalLinkAlt, faLightbulb, faPlayCircle } from "@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
+import videoPlayerManager from "../utils/videoPlayerManager";
 
 const Project = ({
   title,
@@ -22,6 +23,8 @@ const Project = ({
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef(null);
   const videoContainerRef = useRef(null);
+  // Generate unique video ID for this instance
+  const videoIdRef = useRef(`project-video-${title}-${index}-${Date.now()}`);
 
   // Intersection Observer to lazy load video when in viewport
   useEffect(() => {
@@ -58,6 +61,58 @@ const Project = ({
       setShouldLoadVideo(true);
     }
   };
+
+  // Register/unregister video with the manager
+  useEffect(() => {
+    if (!cloudinaryVideoUrl || !shouldLoadVideo) return;
+
+    // Capture values for cleanup
+    const videoId = videoIdRef.current;
+    let videoElement = null;
+    let timeoutId = null;
+    const handlers = {
+      loadedmetadata: null,
+      loadeddata: null,
+    };
+
+    // Use a small delay to ensure the video element is rendered
+    timeoutId = setTimeout(() => {
+      videoElement = videoRef.current;
+      if (!videoElement) return;
+
+      // Register video when it's loaded
+      const handleVideoLoaded = () => {
+        videoPlayerManager.registerVideo(videoId, videoElement);
+      };
+
+      handlers.loadedmetadata = handleVideoLoaded;
+      handlers.loadeddata = handleVideoLoaded;
+
+      // Register immediately if video is already loaded, otherwise wait for load
+      if (videoElement.readyState >= 2) {
+        // Video metadata is loaded
+        videoPlayerManager.registerVideo(videoId, videoElement);
+      } else {
+        videoElement.addEventListener('loadedmetadata', handleVideoLoaded);
+        videoElement.addEventListener('loadeddata', handleVideoLoaded);
+      }
+    }, 100);
+
+    // Cleanup: unregister on unmount
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      
+      // Remove event listeners if they were added
+      if (videoElement && handlers.loadedmetadata) {
+        videoElement.removeEventListener('loadedmetadata', handlers.loadedmetadata);
+        videoElement.removeEventListener('loadeddata', handlers.loadeddata);
+      }
+      
+      videoPlayerManager.unregisterVideo(videoId);
+    };
+  }, [cloudinaryVideoUrl, shouldLoadVideo]);
 
   return (
     <div
