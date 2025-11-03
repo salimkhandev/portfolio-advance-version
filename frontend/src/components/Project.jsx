@@ -1,7 +1,7 @@
-import { faClock, faCode, faExternalLinkAlt, faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCode, faExternalLinkAlt, faLightbulb, faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Project = ({
   title,
@@ -18,6 +18,46 @@ const Project = ({
   cloudinaryThumbnailUrl,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef(null);
+  const videoContainerRef = useRef(null);
+
+  // Intersection Observer to lazy load video when in viewport
+  useEffect(() => {
+    if (!cloudinaryVideoUrl || shouldLoadVideo) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Video is in viewport, load it
+            setShouldLoadVideo(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        rootMargin: "50px", // Start loading 50px before video enters viewport
+        threshold: 0.1,
+      }
+    );
+
+    if (videoContainerRef.current) {
+      observer.observe(videoContainerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [cloudinaryVideoUrl, shouldLoadVideo]);
+
+  // Load video on hover or click
+  const handleVideoInteraction = () => {
+    if (!isVideoLoaded) {
+      setShouldLoadVideo(true);
+    }
+  };
 
   return (
     <div
@@ -33,18 +73,49 @@ const Project = ({
 
       {/* Project video, thumbnail, or fallback image */}
       {cloudinaryVideoUrl ? (
-        <div className="w-[100%] px-2 sm:px-4 pt-2 sm:pt-4 overflow-hidden">
-          <video
-            src={cloudinaryVideoUrl}
-            controls
-            className="w-full h-auto object-cover transform transition-transform duration-700"
-            style={{
-              aspectRatio: "16/9",
-            }}
-            preload="none"
-          >
-            Your browser does not support the video tag.
-          </video>
+        <div
+          ref={videoContainerRef}
+          className="w-[100%] px-2 sm:px-4 pt-2 sm:pt-4 overflow-hidden relative"
+          onMouseEnter={handleVideoInteraction}
+          onClick={handleVideoInteraction}
+        >
+          {!shouldLoadVideo ? (
+            // Show thumbnail as placeholder until video is ready to load
+            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
+              {cloudinaryThumbnailUrl ? (
+                <img
+                  src={cloudinaryThumbnailUrl}
+                  alt={title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transform transition-transform duration-700"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-800/50 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faPlayCircle} className="w-16 h-16 text-white/50" />
+                </div>
+              )}
+              {/* Play button overlay */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors cursor-pointer">
+                <FontAwesomeIcon icon={faPlayCircle} className="w-16 h-16 text-white/80 hover:text-white transition-all hover:scale-110" />
+              </div>
+            </div>
+          ) : (
+            <video
+              ref={videoRef}
+              src={cloudinaryVideoUrl}
+              controls
+              className="w-full h-auto object-cover transform transition-transform duration-700"
+              style={{
+                aspectRatio: "16/9",
+              }}
+              preload="metadata"
+              onLoadedData={() => setIsVideoLoaded(true)}
+              onMouseEnter={handleVideoInteraction}
+              onClick={handleVideoInteraction}
+            >
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
       ) : cloudinaryThumbnailUrl ? (
         <div className="w-[100%] px-2 sm:px-4 pt-2 sm:pt-4 overflow-hidden">
