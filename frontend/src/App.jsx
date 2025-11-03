@@ -39,7 +39,7 @@ function App() {
       <ProjectsProvider>
         <SkillsProvider>
           <Router>
-            <div className="svg relative">
+            <div className="svg relative min-h-screen bg-[#0b1020]">
               {showSplash ? (
                 <SplashScreen />
               ) : (
