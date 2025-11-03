@@ -1,24 +1,15 @@
 import {
-  faBars,
   faHome,
   faProjectDiagram,
-  faTimes,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-  }, [isOpen]);
+  // no mobile overlay menu; keep scrolling enabled
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,111 +69,50 @@ const Header = () => {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     
+    
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
   return (
-    <header className={`fixed w-full top-0 z-50 transition-all duration-300`}>
+    <header className={`fixed w-full top-6 z-50 transition-all duration-300`}>
       {/* Semi-transparent header background */}
       <div
         className="absolute inset-0 transition-all duration-300"
       />
 
-      <nav className="container mx-auto flex justify-between items-center px-4 py-4 relative z-10">
+      <nav className="container mx-auto flex justify-between items-center px-4 py-3 relative z-10">
         {/* Logo */}
         <a href="#home" className="flex items-center group z-50">
           <span className="text-xl font-['Great_Vibes'] bg-gradient-to-r from-[#60A5FA] to-[#93C5FD] bg-clip-text text-transparent">
           </span>
         </a>
 
-        {/* Mobile Hamburger Button - Enhanced visibility */}
-        <button
-          className={`md:hidden z-50 w-12 h-12 flex items-center justify-center rounded-xl
-                    ${
-                      isOpen
-                        ? "bg-white/10 shadow-lg border border-white/20"
-                        : "bg-[#1a2544] shadow-lg border border-blue-500/30"
-                    }
-                    transition-all duration-300 hover:scale-105 active:scale-95`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <FontAwesomeIcon
-            icon={isOpen ? faTimes : faBars}
-            className={`text-xl transition-all duration-300
-                        ${
-                          isOpen
-                            ? "text-white rotate-90 scale-110"
-                            : "text-blue-400 rotate-0"
-                        }`}
-          />
-        </button>
+        {/* Compact mobile nav (no hamburger) - always centered */}
+        <ul className="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 z-40">
+          {[
+            { href: "#home", text: "Home", icon: faHome, id: "home" },
+            { href: "#about", text: "About", icon: faUser, id: "about" },
+            { href: "#projects", text: "Projects", icon: faProjectDiagram, id: "projects" },
+          ].map((item, index) => {
+            const isActive = activeSection === item.id;
+            return (
+              <li key={index}>
+                <a
+                  href={item.href}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs border backdrop-blur-sm transition-colors
+                    ${isActive ? "bg-white/15 border-blue-400/50 text-blue-200" : "bg-[#131320]/40 border-white/10 text-blue-300"}`}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
+                  <span>{item.text}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
 
-        {/* Mobile Menu - Enhanced blur and layout */}
-        <div
-          className={`fixed inset-0 transition-all duration-300 md:hidden
-                        ${
-                          isOpen
-                            ? "opacity-100 translate-x-0"
-                            : "opacity-0 translate-x-full pointer-events-none"
-                        }`}
-        >
-          {/* Enhanced blur background with gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050507]/90 to-[#0a0a12]/95" />
-
-          {/* Content Layer with improved spacing */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full">
-            <ul className="flex flex-col items-center space-y-8 p-6 w-full max-w-sm mx-auto">
-              {[
-                { href: "#home", text: "Home", icon: faHome, id: "home" },
-                { href: "#about", text: "About", icon: faUser, id: "about" },
-                { href: "#projects", text: "Projects", icon: faProjectDiagram, id: "projects" },
-              ].map((item, index) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <li
-                    key={index}
-                    className={`w-full transform transition-all duration-300 ${
-                      isOpen
-                        ? "translate-x-0 opacity-100"
-                        : "translate-x-8 opacity-0"
-                    }`}
-                  >
-                    <a
-                      href={item.href}
-                      className={`flex items-center justify-center group w-full px-6 py-4 rounded-xl
-                                        border transition-all duration-300 hover:scale-105 ${
-                        isActive
-                          ? "bg-white/15 border-blue-400/50 shadow-lg shadow-blue-400/20"
-                          : "bg-[#131320]/40 border-white/10 hover:bg-white/10 hover:border-blue-400/30"
-                      }`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <FontAwesomeIcon
-                        icon={item.icon}
-                        className={`mr-3 text-xl transition-colors duration-300 ${
-                          isActive
-                            ? "text-blue-300"
-                            : "text-blue-400 group-hover:text-blue-300"
-                        }`}
-                      />
-                      <span
-                        className={`text-2xl font-['Great_Vibes'] transition-all duration-300 ${
-                          isActive
-                            ? "bg-gradient-to-r from-[#ff4d4d] to-[#A64DDA] bg-clip-text text-transparent"
-                            : "bg-gradient-to-r from-[#60A5FA] to-[#93C5FD] bg-clip-text text-transparent"
-                        }`}
-                      >
-                        {item.text}
-                      </span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
+        {/* Removed full-screen mobile menu */}
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex items-center space-x-8">

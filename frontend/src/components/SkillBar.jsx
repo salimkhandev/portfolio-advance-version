@@ -84,7 +84,7 @@ const Skills = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen -mb-12 sm:-mb-8 md:-mb-4">
+      <div className="flex justify-center items-center py-16">
         <div className="text-blue-400 text-xl">Loading skills...</div>
       </div>
     );
@@ -92,16 +92,16 @@ const Skills = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen -mb-12 sm:-mb-8 md:-mb-4">
+      <div className="flex justify-center items-center py-16">
         <div className="text-red-400 text-xl">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen -mb-12 sm:-mb-8 md:-mb-4 overflow-hidden" style={{ position: 'relative' }}>
+    <div className="flex justify-center items-center py-8 sm:py-10 md:py-12 overflow-visible" style={{ position: 'relative' }}>
       <style>{styles}</style>
-      <section className="w-full h-screen relative py-4 sm:py-8 md:py-16 overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
+      <section className="w-full relative py-4 sm:py-8 md:py-12 overflow-visible" style={{ position: 'relative', zIndex: 1 }}>
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-52 md:w-64 h-52 md:h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/4 right-1/4 w-52 md:w-64 h-52 md:h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>

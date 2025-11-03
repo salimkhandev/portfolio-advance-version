@@ -17,7 +17,7 @@ const Projects = () => {
   return (
     <section
       id="projects"
-      className="min-h-screen py-20 relative"
+      className="min-h-[70vh] md:min-h-screen py-10 md:py-20 relative"
     >
 
       <div className="container mx-auto px-4 relative z-10">

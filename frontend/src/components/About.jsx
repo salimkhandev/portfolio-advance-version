@@ -15,11 +15,11 @@ const About = () => {
   return (
     <section
       id="about"
-      className="min-h-screen relative py-12 md:py-16 pb-8 md:pb-12"
+      className="relative py-8 md:py-12 pb-6 md:pb-10"
     >
 
-      <div className="container  mx-auto px-4 relative z-10">
-        <div className="max-w-6xl mx-auto md:border md:border-white/10 rounded-3xl overflow-hidden">
+      <div className="container  mx-auto px-4 relative z-40">
+        <div className="max-w-6xl mx-auto md:border md:border-white/10 rounded-3xl overflow-visible">
           {/* About Section Header */}
           {/* <div className="text-center p-8">
             <h2
@@ -31,7 +31,7 @@ const About = () => {
           </div> */}
 
           {/* Content Container */}
-          <div className="p-4 md:p-8 space-y-6 md:space-y-12 rounded-b-3xl">
+          <div className="p-4 md:p-8 space-y-4 md:space-y-8 rounded-b-3xl">
             {/* Bio Section */}
             <div data-aos="fade-up" className="max-w-3xl mx-auto space-y-6">
               <p className="text-lg md:text-xl text-white/90 leading-relaxed">
