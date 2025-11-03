@@ -206,7 +206,7 @@ const Skills = () => {
                       {/* Topics List - centered below each item */}
                       {expandedSkill === skill._id && skill.topics?.length > 0 && (
                         <div
-                          className="absolute w-56 sm:w-72 md:w-80 px-2 pointer-events-auto transition-all duration-300 ease-out left-1/2 transform -translate-x-1/2"
+                          className="absolute w-44 sm:w-72 md:w-80 px-2 pointer-events-auto transition-all duration-300 ease-out left-1/2 transform -translate-x-1/2"
                           style={{
                             position: 'absolute',
                             top: '100%',

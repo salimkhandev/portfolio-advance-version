@@ -19,11 +19,6 @@
 }
 html {
     scroll-behavior: smooth;
-    zoom: 1.0;
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
 }
 .roboto-slab {
     font-family: "Roboto Slab", serif;
@@ -149,12 +144,6 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
     color-scheme: light dark;
-    zoom: 1.0;
-    transform: scale(1);
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
 }
 
 body.dark {
