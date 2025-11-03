@@ -19,7 +19,8 @@
 }
 html {
     scroll-behavior: smooth;
-    background-color: #0b1020; /* Dark background to match 3D background */
+    /* background-color: #0b1020; Dark background to match 3D background */
+    background-color: transparent;
     min-height: 100%;
 }
 .roboto-slab {
