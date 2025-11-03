@@ -41,7 +41,7 @@ const Project = ({
             style={{
               aspectRatio: "16/9",
             }}
-            preload="metadata"
+            preload="none"
           >
             Your browser does not support the video tag.
           </video>

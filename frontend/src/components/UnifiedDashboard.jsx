@@ -635,6 +635,7 @@ const ProjectsView = () => {
                       src={videoPreview || existingVideoUrl}
                       controls
                       className="w-full rounded-lg max-h-64 bg-black"
+                      preload="none"
                     />
                     <button
                       type="button"
