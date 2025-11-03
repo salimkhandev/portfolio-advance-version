@@ -130,7 +130,7 @@ const Project = ({
       {cloudinaryVideoUrl ? (
         <div
           ref={videoContainerRef}
-          className="w-[100%] px-2 sm:px-4 pt-2 sm:pt-4 overflow-hidden relative"
+          className="w-[100%] px-1 sm:px-4 pt-1 sm:pt-4 overflow-hidden relative"
           onMouseEnter={handleVideoInteraction}
           onClick={handleVideoInteraction}
         >
@@ -198,7 +198,7 @@ const Project = ({
         </div>
       )}
 
-      <div className="relative p-3 sm:p-6 space-y-2 sm:space-y-4">
+      <div className="relative p-2 sm:p-6 space-y-2 sm:space-y-4">
         {/* Title with animated gradient on hover */}
         <h3
           className={`text-xl font-bold tracking-tight transition-all duration-500 ${

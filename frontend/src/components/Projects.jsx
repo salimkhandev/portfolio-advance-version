@@ -20,9 +20,9 @@ const Projects = () => {
       className="min-h-[70vh] md:min-h-screen py-10 md:py-20 relative"
     >
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-2 sm:px-4 relative z-10">
         <div
-          className="max-w-6xl mx-auto md:bg-transparent md:backdrop-blur-sm rounded-3xl md:border md:border-white/10 md:shadow-2xl overflow-hidden"
+          className="max-w-full sm:max-w-6xl mx-auto md:bg-transparent md:backdrop-blur-sm rounded-3xl md:border md:border-white/10 md:shadow-2xl overflow-hidden"
           data-aos="fade-up"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-center p-8 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -48,7 +48,7 @@ const Projects = () => {
           )}
 
           {!loading && !error && projects.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-6 rounded-b-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 p-2 sm:p-6 rounded-b-3xl">
               {projects.map((proj, index) => {
                 // Map all backend schema fields to frontend props
                 const projectData = {
