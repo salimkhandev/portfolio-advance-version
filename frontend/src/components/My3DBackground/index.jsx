@@ -32,7 +32,9 @@ export default function My3DBackground() {
     ).matches;
     const isSmallScreen = window.innerWidth < 768;
 
-    if (prefersReducedMotion || isSmallScreen) {
+    // Only skip 3D background if user prefers reduced motion
+    // Mobile devices can still use the 3D background with optimized settings
+    if (prefersReducedMotion) {
       // Fallback static gradient background
       containerRef.current.style.background = isDarkMode
         ? 'radial-gradient(circle at 50% 50%, #1a1a3a 0%, #050510 100%)'
@@ -79,24 +81,46 @@ export default function My3DBackground() {
           vantaRef.current.destroy();
         }
 
-        // Initialize Vanta NET with lighter params
-        vantaRef.current = window.VANTA.NET({
-          el: containerRef.current,
-          THREE: window.THREE,
-          mouseControls: false,
-          touchControls: false,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 0.8,
-          color: isDarkMode ? 0x4d8aff : 0x7aa2ff,
-          backgroundColor: isDarkMode ? 0x0b1020 : 0xf5f5f5,
-          points: 6.0,
-          maxDistance: 14.0,
-          spacing: 20.0,
-          showDots: true,
-        });
+        // Initialize Vanta NET with optimized params for mobile
+        const vantaConfig = isSmallScreen
+          ? {
+              // Mobile-optimized settings
+              el: containerRef.current,
+              THREE: window.THREE,
+              mouseControls: false,
+              touchControls: false,
+              gyroControls: false,
+              minHeight: 200.0,
+              minWidth: 200.0,
+              scale: 1.0,
+              scaleMobile: 0.8,
+              color: isDarkMode ? 0x4d8aff : 0x7aa2ff,
+              backgroundColor: isDarkMode ? 0x0b1020 : 0xf5f5f5,
+              points: 4.0, // Fewer points for better mobile performance
+              maxDistance: 12.0,
+              spacing: 18.0,
+              showDots: true,
+            }
+          : {
+              // Desktop settings
+              el: containerRef.current,
+              THREE: window.THREE,
+              mouseControls: false,
+              touchControls: false,
+              gyroControls: false,
+              minHeight: 200.0,
+              minWidth: 200.0,
+              scale: 1.0,
+              scaleMobile: 0.8,
+              color: isDarkMode ? 0x4d8aff : 0x7aa2ff,
+              backgroundColor: isDarkMode ? 0x0b1020 : 0xf5f5f5,
+              points: 6.0,
+              maxDistance: 14.0,
+              spacing: 20.0,
+              showDots: true,
+            };
+
+        vantaRef.current = window.VANTA.NET(vantaConfig);
       } catch (error) {
         console.error('Failed to initialize Vanta NET:', error);
         // Fallback to gradient on error
@@ -146,7 +170,7 @@ export default function My3DBackground() {
     window.addEventListener('touchstart', initOnInteraction, { once: true });
 
     const ric = window.requestIdleCallback || ((cb) => setTimeout(cb, 250));
-    const idleId = ric(() => { if (!hasInteractedRef.current) initVanta(); });
+    ric(() => { if (!hasInteractedRef.current) initVanta(); });
 
     const handleResize = () => {
       if (vantaRef.current && vantaRef.current.resize) {
